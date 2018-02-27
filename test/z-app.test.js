@@ -14,8 +14,12 @@ const config = require('./fixtures/config.json');
 const utils = require('../src/utils.js');
 const SkypeClient = require('../src/client.js');
 const getDisplayNameStub = stub(utils, 'getDisplayName');
+const setRoomAliasStub = stub(utils, 'setRoomAlias');
 const App = proxyquire('../src/app.js', {
-    'utils': {getDisplayName: getDisplayNameStub},
+    'utils': {
+        getDisplayName: getDisplayNameStub,
+        setRoomAlias: setRoomAliasStub,
+    },
 });
 
 const TEST_USER_DB_PATH = path.resolve(__dirname, 'fixtures', 'test-users.db');
@@ -171,6 +175,42 @@ describe('App testing', () => {
         expect(getDisplayNameStub).to.have.been.called;
         const expectedId = utils.b2a('alias_name');
         expect(skypeClientSendMessageStub).to.have.been.calledWith(expectedId);
+    });
+
+    it('Should create chat in skype message after getting invite event from matrix', async () => {
+        let result;
+        const {controller} = app.bridge.opts;
+        controller.thirdPartyLookup = null;
+
+        setRoomAliasStub.callsFake(sender => new Promise((res, rej) => res()));
+        stub(SkypeClient.prototype, 'connect').callsFake(() => ({}));
+        const skypeClientSendMessageStub = stub(SkypeClient.prototype, 'sendMessage').callsFake(() => ({}));
+
+        const event = {
+            'content': {
+                body: 'oh noes!',
+                msgtype: 'm.text',
+            },
+            'membership': 'invite',
+            'state_key': '@skype_ODpsaXZlOmd2X2dydWRpbmlu:bar',
+            'sender': '@test_user:bar',
+            'user_id': '@virtual_foo:bar',
+            'room_id': '!flibble:bar',
+            'type': 'm.room.member',
+        };
+        const spyOnEvent = stub(controller, 'onEvent').callsFake(req => {
+            result = req.data;
+            return req.resolve(app.handleMatrixEvent(req));
+        });
+        await puppet.startClient();
+        await app.initThirdPartyClient();
+        await app.bridge.run(8090, puppet, appService);
+        await appService.emit('event', event);
+        expect(spyOnEvent).to.have.been.called;
+        expect(result).to.deep.equal(event);
+        const expectedAlias = app.getRoomAliasFromThirdPartyRoomId(utils.a2b('!flibble:bar'));
+
+        expect(skypeClientSendMessageStub).to.have.been.calledWith('!flibble:bar', expectedAlias);
     });
 
     after(() => {
