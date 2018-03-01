@@ -4,13 +4,14 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "eslint": "eslint .",
+    "lint": "eslint .",
     "start": "DEBUG=matrix-puppet:* node index.js",
     "test": "NODE_ENV=test nyc mocha --exit",
-    "test-report": "NODE_ENV=test nyc --reporter=html mocha --exit"
+    "test-report": "NODE_ENV=test nyc --reporter=html mocha --exit",
+    "coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls"
   },
   "pre-commit": [
-    "eslint",
+    "lint",
     "test"
   ],
   "dependencies": {
@@ -29,6 +30,7 @@
   "devDependencies": {
     "chai": "^4.1.2",
     "chai-http": "^3.0.0",
+    "coveralls": "^3.0.0",
     "eslint": "^4.16.0",
     "eslint-config-google": "^0.9.1",
     "eslint-plugin-import": "^2.8.0",
