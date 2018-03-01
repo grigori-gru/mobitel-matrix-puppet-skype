@@ -2,6 +2,9 @@ language: node_js
 node_js:
   - stable
 
+install:
+  - npm install -g codecov
+
 branches:
   only:
   - new-tests
@@ -9,4 +12,5 @@ branches:
 script:
   - npm run lint
   - npm test
-after_success: 'npm run coveralls'
+  - npm run report-coverage
+  - codecov

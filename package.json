@@ -8,7 +8,7 @@
     "start": "DEBUG=matrix-puppet:* node index.js",
     "test": "NODE_ENV=test nyc mocha --exit",
     "test-report": "NODE_ENV=test nyc --reporter=html mocha --exit",
-    "coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls"
+    "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
   },
   "pre-commit": [
     "lint",
