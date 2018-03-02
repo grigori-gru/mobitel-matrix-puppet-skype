@@ -2,8 +2,7 @@
 Communication Matrix with Skype via puppet
 
 [![Build Status](https://travis-ci.org/grigori-gru/mobitel-matrix-puppet-skype.svg?branch=new-tests)](https://travis-ci.org/grigori-gru/mobitel-matrix-puppet-skype)
-
-[![Coverage Status](https://coveralls.io/repos//grigori-gru/mobitel-matrix-puppet-skype/badge.svg?branch=new-tests)](https://coveralls.io/r//grigori-gru/mobitel-matrix-puppet-skype?branch=new-tests)
+[![codecov](https://codecov.io/gh/grigori-gru/mobitel-matrix-puppet-skype/branch/new-tests/graph/badge.svg)](https://codecov.io/gh/grigori-gru/mobitel-matrix-puppet-skype)
 
 Based on [matrix-puppet-skype](https://github.com/matrix-hacks/matrix-puppet-skype).
 
